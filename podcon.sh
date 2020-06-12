@@ -1,33 +1,24 @@
 #!/bin/sh
 
-# A script that converts audio/video files into formats compatible with
+# A script that converts audio/video files into formats compatible with media players like the SanDisk Sansa.
 
-file=$(ls -A | grep -i --include=\*.{ogg,OGG,opus,OPUS,m4a,M4A} '' | sed -n 1p ) #> ~/.cache/podcon
+folder="Converted_MP3"
+pfl=~/.cache/pfl #Pod File List
 
-echo $file
+ls -A -p | grep -v / | grep -i --include=\*.{ogg,OGG,opus,OPUS,m4a,M4A,webm,WEBM} '' > $pfl
+len=$(cat $pfl | wc -l)
 
-#bs=$(echo $file | sed 's/ /\\ /g')
+echo $len
 
-#echo $bs
-
-#tk=$(echo $file | sed 's/ /_/g')
-
-#echo $tk
-
-#cp $bs $tk
-
-if [ -d "mp3" ]; then
-    echo "mp3 is a directory."
+if [ -d "Converted_MP3" ]; then
+    echo "$folder directory exists. Continuing..."
 else
-	mkdir mp3
+	mkdir $folder
 fi
 
-base="${file%.*}"
-
-echo $base
-
-echo "$file"
-
-ffmpeg -hide_banner -i "$file" -ac 2 mp3/"$base".mp3
-
-#ffmpeg -i input.wav -vn -ar 44100 -ac 2 -b:a 192k output.mp3
+for i in `seq 1 $len`
+do
+	file=$(awk NR==$i $pfl)
+	base="${file%.*}"
+	ffmpeg -hide_banner -i "$file" -ac 2 $folder/"$base".mp3
+done
