@@ -1,20 +1,30 @@
 #!/bin/sh
 
-# A script that converts audio/video files into formats compatible with media players like the SanDisk Sansa.
+# A script that converts audio files into formats compatible with media players like the SanDisk Sansa.
 
 folder="Converted_MP3"
 pfl=~/.cache/pfl #Pod File List
 
-ls -A -p | grep -v / | grep -i --include=\*.{ogg,OGG,opus,OPUS,m4a,M4A,webm,WEBM} '' > $pfl
-len=$(cat $pfl | wc -l)
-
-echo $len
+rm $pfl
 
 if [ -d "Converted_MP3" ]; then
-    echo "$folder directory exists. Continuing..."
+	echo "$folder directory exists. Continuing..."
 else
+	echo "Creating the directory $folder to store the mp3s."
 	mkdir $folder
 fi
+
+#for entry in "$PWD"/*
+#do
+#	echo "$entry" >> $fl
+#done
+
+# | grep -v /
+find -type f | sed 's/^..//' | grep -i --include=\*.{ogg,OGG,opus,OPUS,m4a,M4A,webm,WEBM} '' > $pfl
+
+len=$(cat $pfl | wc -l)
+
+echo "$len files to convert."
 
 for i in `seq 1 $len`
 do
