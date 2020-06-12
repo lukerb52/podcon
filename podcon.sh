@@ -14,12 +14,6 @@ else
 	mkdir $folder
 fi
 
-#for entry in "$PWD"/*
-#do
-#	echo "$entry" >> $fl
-#done
-
-# | grep -v /
 find -type f | sed 's/^..//' | grep -i --include=\*.{ogg,OGG,opus,OPUS,m4a,M4A,webm,WEBM} '' > $pfl
 
 len=$(cat $pfl | wc -l)
