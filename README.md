@@ -2,9 +2,9 @@
 
 `podcon` is a short GNU shell script that scans a directory for music files and converts them to formats usable by portable MP3 players, such as the SanDisk Sansa.
 
-# Installation
+# Installation & Use
 
-just run `podcon.sh` in the directory you want converted. Converted files will appear in a new subdirectory.
+Just download & run `podcon.sh` in the directory you want converted. Converted files will appear in a new subdirectory.
 
 # Prerequisites
 
