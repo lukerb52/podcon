@@ -5,20 +5,30 @@
 folder="Converted_MP3"
 pfl=~/.cache/pfl #Pod File List
 
+## Cleanup
+
 rm $pfl
+
+## Indexing Script
+
+find -type f | sed 's/^..//' | grep -i "\.opus\|\.m4a\|\.ogg\|\.webm" > $pfl
+
+len=$(cat $pfl | wc -l)
+
+echo "$len files to convert."
+
+## Folder Script
 
 if [ -d "Converted_MP3" ]; then
 	echo "$folder directory exists. Continuing..."
+elif [$len==0]; then
+	echo "No music in this directory to convert."
 else
 	echo "Creating the directory $folder to store the mp3s."
 	mkdir $folder
 fi
 
-find -type f | sed 's/^..//' | grep -i --include=\*.{ogg,OGG,opus,OPUS,m4a,M4A,webm,WEBM} '' > $pfl
-
-len=$(cat $pfl | wc -l)
-
-echo "$len files to convert."
+## Conversion Script
 
 for i in `seq 1 $len`
 do
