@@ -3,15 +3,13 @@
 # A script that converts audio files into formats compatible with media players like the SanDisk Sansa.
 
 folder="Converted_MP3"
-pfl=~/.cache/pfl #Pod File List
-
-## Cleanup
-
-rm $pfl
+timecode=$(date +%s)
+pfln="pfl"$timecode
+pfl=~/.cache/$pfln #Pod File List
 
 ## Indexing Script
 
-find -type f | sed 's/^..//' | grep -i "\.opus\|\.m4a\|\.ogg\|\.webm" > $pfl
+find -type f | sed 's/^..//' | grep -i "\.opus\|\.m4a\|\.ogg\|\.webm\|\.mp3" > $pfl
 
 len=$(cat $pfl | wc -l)
 
@@ -19,7 +17,7 @@ echo "$len files to convert."
 
 ## Folder Script
 
-if [ -d "Converted_MP3" ]; then
+if [ -d $folder ]; then
 	echo "$folder directory exists. Continuing..."
 elif [$len==0]; then
 	echo "No music in this directory to convert."
@@ -36,3 +34,7 @@ do
 	base="${file%.*}"
 	ffmpeg -hide_banner -i "$file" -ac 2 $folder/"$base".mp3
 done
+
+## Cleanup
+
+rm $pfl
