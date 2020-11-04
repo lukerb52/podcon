@@ -33,10 +33,10 @@ do
 	base="${file%.*}"
 	ext="${file##*.}"
 	#echo $file
-	#if [ "$ext" == "mp3" ];
-	if ! (( "$ext" == "mp3" ));
+	if [ "$ext" == "mp3" ];
+	#if ! (( "$ext" == "mp3" ));
 	then
-		cp $file $folder
+		cp "$file" $folder
 	else
 		ffmpeg -hide_banner -i "$file" -ac 2 $folder/"$base".mp3
 	fi
