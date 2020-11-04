@@ -2,14 +2,13 @@
 
 # A script that converts audio files into formats compatible with media players like the SanDisk Sansa.
 
-folder="Converted_MP3"
-timecode=$(date +%s)
-pfln="pfl"$timecode
-pfl=~/.cache/$pfln #Pod File List
+tail="_MP3"
+folder="`basename $PWD`${tail}"
+pfl=~/.cache/pfl$(date +%s) #Pod File List
 
 ## Indexing Script
 
-find -type f | sed 's/^..//' | grep -i "\.opus\|\.m4a\|\.ogg\|\.webm\|\.mp3" > $pfl
+find -type f | sed 's/^..//' | grep -i "\.opus\|\.m4a\|\.ogg\|\.webm\|\.mp3\|\.wav\|\.aif" > $pfl
 
 len=$(cat $pfl | wc -l)
 
@@ -32,7 +31,15 @@ for i in `seq 1 $len`
 do
 	file=$(awk NR==$i $pfl)
 	base="${file%.*}"
-	ffmpeg -hide_banner -i "$file" -ac 2 $folder/"$base".mp3
+	ext="${file##*.}"
+	#echo $file
+	#if [ "$ext" == "mp3" ];
+	if ! (( "$ext" == "mp3" ));
+	then
+		cp $file $folder
+	else
+		ffmpeg -hide_banner -i "$file" -ac 2 $folder/"$base".mp3
+	fi
 done
 
 ## Cleanup
