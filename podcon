@@ -3,31 +3,32 @@
 # A script that converts audio files into formats compatible with media players like the SanDisk Sansa.
 
 tail="_MP3"
-folder="`basename $PWD`${tail}"
+folder="$(basename "$PWD")${tail}"
 pfl=~/.cache/pfl$(date +%s) #Pod File List
 
 ## Indexing Script
 
-find -type f | sed 's/^..//' | grep -i "\.opus\|\.m4a\|\.ogg\|\.webm\|\.mp3\|\.wav\|\.aif" > $pfl
+find -type f | sed 's/^..//' | grep -i "\.opus\|\.m4a\|\.ogg\|\.webm\|\.mp3\|\.wav\|\.aif" > "$pfl"
 
-len=$(cat $pfl | wc -l)
+# len=$(cat "$pfl" | wc -l)
+len=$(wc -l < "$pfl")
 
-echo "$len files to convert."
+echo """$len"" files to convert."
 
 ## Folder Script
 
-if [ -d $folder ]; then
-	echo "$folder directory exists. Continuing..."
-elif [$len==0]; then
+if [ -d "$folder" ]; then
+	echo """$folder"" directory exists. Continuing..."
+elif [ "$len" = 0 ]; then
 	echo "No music in this directory to convert."
 else
-	echo "Creating the directory $folder to store the mp3s."
-	mkdir $folder
+	echo "Creating the directory ""$folder"" to store the mp3s."
+	mkdir "$folder"
 fi
 
 ## Conversion Script
 
-for i in `seq 1 $len`
+for i in $(seq 1 "$len")
 do
 	file=$(awk NR==$i $pfl)
 	base="${file%.*}"
@@ -36,9 +37,12 @@ do
 	if [ "$ext" == "mp3" ];
 	#if ! (( "$ext" == "mp3" ));
 	then
-		cp "$file" $folder
+		cp "$file" "$folder"
+		echo "Successfully copied ""$file"" into ""$folder"""
 	else
-		ffmpeg -hide_banner -i "$file" -ac 2 $folder/"$base".mp3
+		echo "
+		Converting ""$file"" into ""$base"".mp3"
+		ffmpeg -v quiet -hide_banner -i "$file" -ac 2 "$folder"/"$base".mp3
 	fi
 done
 
