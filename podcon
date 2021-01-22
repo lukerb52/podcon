@@ -2,9 +2,10 @@
 
 # A script that converts audio files into formats compatible with media players like the SanDisk Sansa.
 
-tail="_MP3"
+goal_ext=".mp3"
+tail="_$(echo $goal_ext | tr '[:lower:]' '[:upper:]' | sed 's/\.//g')"
 folder="$(basename "$PWD")${tail}"
-pfl=~/.cache/pfl$(date +%s) #Pod File List
+pfl="/tmp/pfl$(date +%s)" #Pod File List
 
 ## Indexing Script
 
@@ -22,7 +23,7 @@ if [ -d "$folder" ]; then
 elif [ "$len" = 0 ]; then
 	echo "No music in this directory to convert."
 else
-	echo "Creating the directory ""$folder"" to store the mp3s."
+	echo "Creating the directory ""$folder"" to store the ""$goal_ext""s."
 	mkdir "$folder"
 fi
 
@@ -30,22 +31,21 @@ fi
 
 for i in $(seq 1 "$len")
 do
-	file=$(awk NR==$i $pfl)
+	file=$(awk NR=="$i" "$pfl")
 	base="${file%.*}"
 	ext="${file##*.}"
 	#echo $file
-	if [ "$ext" == "mp3" ];
-	#if ! (( "$ext" == "mp3" ));
+	if [ "$ext" = "$goal_ext" ];
 	then
 		cp "$file" "$folder"
 		echo "Successfully copied ""$file"" into ""$folder"""
 	else
 		echo "
-		Converting ""$file"" into ""$base"".mp3"
-		ffmpeg -v quiet -hide_banner -i "$file" -ac 2 "$folder"/"$base".mp3
+		Converting ""$file"" into ""$base"$goal_ext
+		ffmpeg -v quiet -hide_banner -i "$file" -ac 2 "$folder"/"$base""$goal_ext"
 	fi
 done
 
 ## Cleanup
 
-rm $pfl
+rm "$pfl"
